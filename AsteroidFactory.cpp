@@ -9,6 +9,10 @@
 #include "GravityBehavior.h"
 
 std::shared_ptr<Asteroid> AsteroidFactory::create(const std::string& type, int size, Vector2 pos) {
+    return create(type, size, pos, Vector2(0.0f, 0.0f));
+}
+
+std::shared_ptr<Asteroid> AsteroidFactory::create(const std::string& type, int size, Vector2 pos, Vector2 vel) {
     std::shared_ptr<AsteroidBehavior> behavior;
 
     if (type == "explosive") {
@@ -19,5 +23,5 @@ std::shared_ptr<Asteroid> AsteroidFactory::create(const std::string& type, int s
         behavior = std::make_shared<NormalBehavior>();
     }
 
-    return std::make_shared<Asteroid>(size, pos, behavior);
+    return std::make_shared<Asteroid>(size, pos, vel, behavior);
 }

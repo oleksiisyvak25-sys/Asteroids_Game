@@ -16,6 +16,7 @@ public:
     AsteroidFactory() = default;
 
     static std::shared_ptr<Asteroid> create(const std::string& type, int size, Vector2 pos);
+    static std::shared_ptr<Asteroid> create(const std::string& type, int size, Vector2 pos, Vector2 vel);
 };
 
 
