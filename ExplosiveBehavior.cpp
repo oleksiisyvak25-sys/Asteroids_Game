@@ -1,19 +1,13 @@
-//
-// Created by alex on 20.10.26.
-//
-
 #include "ExplosiveBehavior.h"
 #include "Asteroid.h"
-#include <iostream>
+#include "Config.h"
 
-ExplosiveBehavior::ExplosiveBehavior() {}
-
-void ExplosiveBehavior::onDestroyed(Asteroid* a) {
-    (void)a;
-    std::cout << "[ExplosiveBehavior] Detonated blast radius damage!\n";
+void ExplosiveBehavior::onDestroyed(Asteroid& a) {
+    a.setBlastRadius(Config::BLAST_BASE_RADIUS + Config::BLAST_RADIUS_PER_SIZE * static_cast<float>(a.getSize()));
 }
 
-void ExplosiveBehavior::applyEffect(Asteroid* a, Spaceship* s) {
+void ExplosiveBehavior::applyEffect(Asteroid& a, Spaceship& s, float dt) {
     (void)a;
     (void)s;
+    (void)dt;
 }

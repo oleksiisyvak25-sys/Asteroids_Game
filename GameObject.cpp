@@ -1,24 +1,40 @@
-//
-// Created by alex on 20.10.26.
-//
-
 #include "GameObject.h"
+#include "Config.h"
+#include <cmath>
+
+namespace {
+    float wrapValue(float value, float limit) {
+        value = std::fmod(value, limit);
+        if (value < 0.0f) {
+            value += limit;
+        }
+        return value;
+    }
+}
 
 GameObject::GameObject()
     : position(0.0f, 0.0f),
       velocity(0.0f, 0.0f),
       angle(0.0f),
       radius(10.0f),
-      isActive(true) {}
+      active(true) {}
 
 void GameObject::update(float dt) {
-    position = position + velocity * dt;
-    wrapAround(800.0f, 600.0f);
+    position += velocity * dt;
+    wrapAround();
 }
 
-void GameObject::wrapAround(float screenWidth, float screenHeight) {
-    if (position.x < 0.0f) position.x += screenWidth;
-    if (position.x > screenWidth) position.x -= screenWidth;
-    if (position.y < 0.0f) position.y += screenHeight;
-    if (position.y > screenHeight) position.y -= screenHeight;
+void GameObject::wrapAround() {
+    position.x = wrapValue(position.x, Config::WORLD_WIDTH);
+    position.y = wrapValue(position.y, Config::WORLD_HEIGHT);
 }
+
+const Vector2& GameObject::getPosition() const { return position; }
+const Vector2& GameObject::getVelocity() const { return velocity; }
+float GameObject::getAngle() const { return angle; }
+float GameObject::getRadius() const { return radius; }
+bool GameObject::isActive() const { return active; }
+
+void GameObject::setPosition(const Vector2& p) { position = p; }
+void GameObject::setVelocity(const Vector2& v) { velocity = v; }
+void GameObject::deactivate() { active = false; }

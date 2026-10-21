@@ -1,7 +1,3 @@
-//
-// Created by alex on 20.10.26.
-//
-
 #ifndef ASTEROIDS_GAME_SPACESHIP_H
 #define ASTEROIDS_GAME_SPACESHIP_H
 
@@ -10,19 +6,34 @@
 #include <memory>
 
 class Spaceship : public GameObject {
-public:
+private:
     int health;
     bool shield;
+    float shieldTimer;
+    float shootTimer;
+    ProjectilePool& pool;
 
-    Spaceship();
+    void clampSpeed();
+
+public:
+    explicit Spaceship(ProjectilePool& projectilePool);
     ~Spaceship() override = default;
 
     ObjectType getType() const override;
+    void update(float dt) override;
+    void onCollision(GameObject& other) override;
+
     void rotate(float dir);
     void thrust();
-    std::shared_ptr<Projectile> shoot(ProjectilePool& pool);
-    void onCollision(GameObject* other) override;
-};
+    std::shared_ptr<Projectile> shoot();
 
+    void takeDamage(int damage);
+    void activateShield(float seconds);
+    void addVelocity(const Vector2& dv);
+
+    int getHealth() const;
+    bool isShielded() const;
+    float getShieldTime() const;
+};
 
 #endif //ASTEROIDS_GAME_SPACESHIP_H

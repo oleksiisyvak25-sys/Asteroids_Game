@@ -1,13 +1,20 @@
-//
-// Created by alex on 20.10.26.
-//
-
 #ifndef ASTEROIDS_GAME_MENUSTATE_H
 #define ASTEROIDS_GAME_MENUSTATE_H
 
+#include "GameState.h"
 
-class MenuState {
+class Game;
+
+class MenuState : public GameState {
+private:
+    Game& game;
+
+public:
+    explicit MenuState(Game& gameInstance);
+    ~MenuState() override = default;
+
+    void handleInput() override;
+    void update(float dt) override;
 };
-
 
 #endif //ASTEROIDS_GAME_MENUSTATE_H

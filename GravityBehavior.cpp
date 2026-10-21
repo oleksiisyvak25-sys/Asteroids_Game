@@ -1,24 +1,19 @@
-//
-// Created by alex on 20.10.26.
-//
-
 #include "GravityBehavior.h"
 #include "Asteroid.h"
 #include "Spaceship.h"
+#include "Config.h"
 
-GravityBehavior::GravityBehavior() {}
-
-void GravityBehavior::onDestroyed(Asteroid* a) {
+void GravityBehavior::onDestroyed(Asteroid& a) {
     (void)a;
 }
 
-void GravityBehavior::applyEffect(Asteroid* a, Spaceship* s) {
-    if (!a || !s) return;
-
-    float dist = a->position.distanceTo(s->position);
-    if (dist < 200.0f && dist > 1.0f) {
-        // Притягуємо корабель до астероїда
-        Vector2 pullDir = (a->position - s->position) * (1.0f / dist);
-        s->velocity = s->velocity + pullDir * 1.5f;
+void GravityBehavior::applyEffect(Asteroid& a, Spaceship& s, float dt) {
+    const float dist = a.getPosition().distanceTo(s.getPosition());
+    if (dist >= Config::GRAVITY_RANGE || dist < 1.0f) {
+        return;
     }
+
+    const float strength = Config::GRAVITY_STRENGTH * (1.0f - dist / Config::GRAVITY_RANGE);
+    const Vector2 pullDir = (a.getPosition() - s.getPosition()).normalized();
+    s.addVelocity(pullDir * (strength * dt));
 }

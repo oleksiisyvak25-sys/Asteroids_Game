@@ -1,50 +1,41 @@
-cmake_minimum_required(VERSION 4.3)
+cmake_minimum_required(VERSION 3.20)
 project(Asteroids_Game)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include_directories(.)
-
-add_executable(Asteroids_Game
-        Asteroid.cpp
-        Asteroid.h
-        AsteroidBehavior.cpp
+set(GAME_CORE_SRC
+        Vector2.h Vector2.cpp
+        Config.h
+        GameObject.h GameObject.cpp
+        AsteroidType.h
         AsteroidBehavior.h
-        AsteroidFactory.cpp
-        AsteroidFactory.h
-        AsteroidSpawner.cpp
-        AsteroidSpawner.h
-        CollisionSystem.cpp
-        CollisionSystem.h
-        ExplosiveBehavior.cpp
-        ExplosiveBehavior.h
-        Game.cpp
-        Game.h
-        GameEngine.cpp
-        GameEngine.h
-        GameObject.cpp
-        GameObject.h
-        GameObserver.cpp
-        GameObserver.h
-        GameOverState.cpp
-        GameOverState.h
-        GameState.cpp
+        NormalBehavior.h NormalBehavior.cpp
+        ExplosiveBehavior.h ExplosiveBehavior.cpp
+        GravityBehavior.h GravityBehavior.cpp
+        Asteroid.h Asteroid.cpp
+        AsteroidFactory.h AsteroidFactory.cpp
+        AsteroidSpawner.h AsteroidSpawner.cpp
+        Projectile.h Projectile.cpp
+        ProjectilePool.h ProjectilePool.cpp
+        Spaceship.h Spaceship.cpp
+        ShieldBonus.h ShieldBonus.cpp
+        Command.h Command.cpp
+        InputHandler.h InputHandler.cpp
+        CollisionSystem.h CollisionSystem.cpp
+        GameObserver.h GameObserver.cpp
+        ScoreManager.h ScoreManager.cpp
+        Renderer.h Renderer.cpp
+        GameEngine.h GameEngine.cpp
         GameState.h
-        GravityBehavior.cpp
-        GravityBehavior.h
-        MenuState.cpp
-        MenuState.h
-        NormalBehavior.cpp
-        NormalBehavior.h
-        PausedState.cpp
-        PausedState.h
-        PlayingState.cpp
-        PlayingState.h
-        Projectile.cpp
-        Projectile.h
-        ProjectilePool.cpp
-        ProjectilePool.h
-        Spaceship.cpp
-        Spaceship.h
-        Vector2.cpp
-        Vector2.h)
+        MenuState.h MenuState.cpp
+        PlayingState.h PlayingState.cpp
+        PausedState.h PausedState.cpp
+        GameOverState.h GameOverState.cpp
+        VictoryState.h VictoryState.cpp
+        Game.h Game.cpp
+)
+
+add_executable(Asteroids_Game main.cpp ${GAME_CORE_SRC})
+
+add_executable(engine_tests tests/engine_tests.cpp ${GAME_CORE_SRC})
