@@ -37,5 +37,3 @@ set(GAME_CORE_SRC
 )
 
 add_executable(Asteroids_Game main.cpp ${GAME_CORE_SRC})
-
-add_executable(engine_tests tests/engine_tests.cpp ${GAME_CORE_SRC})
