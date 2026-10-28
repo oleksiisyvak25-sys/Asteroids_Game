@@ -2,21 +2,30 @@
 #include "Game.h"
 #include "MenuState.h"
 
-VictoryState::VictoryState(Game& gameInstance) : game(gameInstance) {
-    game.getRenderer()->showVictory();
-}
+VictoryState::VictoryState(Game& gameInstance) : game(gameInstance) {}
 
 void VictoryState::handleInput() {
-    const char key = game.readKey("victory> ");
-    if (key == 'c' || key == 'C') {
-        game.continueEndless();
-    } else if (key == 'm' || key == 'M') {
-        game.changeState(std::make_shared<MenuState>(game));
-    } else if (key == 'q' || key == 'Q') {
-        game.stop();
+    for (char key : game.pressedKeys()) {
+        if (key == 'c') {
+            game.continueEndless();
+            return;
+        }
+        if (key == 'm') {
+            game.changeState(std::make_shared<MenuState>(game));
+            return;
+        }
+        if (key == 'q') {
+            game.stop();
+            return;
+        }
     }
 }
 
 void VictoryState::update(float dt) {
     (void)dt;
+}
+
+void VictoryState::render() {
+    game.getRenderer()->render(game.getEngine()->getObjects());
+    game.getRenderer()->showVictory();
 }

@@ -1,19 +1,25 @@
 #include "MenuState.h"
 #include "Game.h"
 
-MenuState::MenuState(Game& gameInstance) : game(gameInstance) {
-    game.getRenderer()->showMenu();
-}
+MenuState::MenuState(Game& gameInstance) : game(gameInstance) {}
 
 void MenuState::handleInput() {
-    const char key = game.readKey("menu> ");
-    if (key == 's' || key == 'S') {
-        game.startNewGame();
-    } else if (key == 'q' || key == 'Q') {
-        game.stop();
+    for (char key : game.pressedKeys()) {
+        if (key == 's') {
+            game.startNewGame();
+            return;
+        }
+        if (key == 'q') {
+            game.stop();
+            return;
+        }
     }
 }
 
 void MenuState::update(float dt) {
     (void)dt;
+}
+
+void MenuState::render() {
+    game.getRenderer()->showMenu();
 }

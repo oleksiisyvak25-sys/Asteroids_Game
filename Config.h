@@ -7,6 +7,7 @@ namespace Config {
     constexpr float PI           = 3.14159265358979f;
 
     constexpr float MAX_PHYSICS_STEP = 1.0f / 60.0f;
+    constexpr float MAX_FRAME_TIME   = 0.1f;
     constexpr float TURN_TIME        = 0.25f;
 
     constexpr int   SHIP_START_HEALTH      = 3;

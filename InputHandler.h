@@ -13,7 +13,7 @@ private:
 public:
     explicit InputHandler(GameEngine& gameEngine);
 
-    std::shared_ptr<Command> handle(char key) const;
+    std::shared_ptr<Command> handle(char key, float scale = 1.0f) const;
 };
 
 #endif //ASTEROIDS_GAME_INPUTHANDLER_H

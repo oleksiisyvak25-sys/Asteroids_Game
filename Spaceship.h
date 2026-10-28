@@ -24,7 +24,7 @@ public:
     void onCollision(GameObject& other) override;
 
     void rotate(float dir);
-    void thrust();
+    void thrust(float scale = 1.0f);
     std::shared_ptr<Projectile> shoot();
 
     void takeDamage(int damage);

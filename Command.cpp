@@ -8,8 +8,10 @@ void RotateCommand::execute(Spaceship& ship) {
     ship.rotate(direction);
 }
 
+ThrustCommand::ThrustCommand(float s) : scale(s) {}
+
 void ThrustCommand::execute(Spaceship& ship) {
-    ship.thrust();
+    ship.thrust(scale);
 }
 
 ShootCommand::ShootCommand(GameEngine& gameEngine) : engine(gameEngine) {}

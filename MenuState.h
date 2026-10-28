@@ -15,6 +15,7 @@ public:
 
     void handleInput() override;
     void update(float dt) override;
+    void render() override;
 };
 
 #endif //ASTEROIDS_GAME_MENUSTATE_H

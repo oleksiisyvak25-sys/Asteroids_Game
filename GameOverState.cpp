@@ -2,19 +2,26 @@
 #include "Game.h"
 #include "MenuState.h"
 
-GameOverState::GameOverState(Game& gameInstance) : game(gameInstance) {
-    game.getRenderer()->showGameOver();
-}
+GameOverState::GameOverState(Game& gameInstance) : game(gameInstance) {}
 
 void GameOverState::handleInput() {
-    const char key = game.readKey("game over> ");
-    if (key == 'm' || key == 'M') {
-        game.changeState(std::make_shared<MenuState>(game));
-    } else if (key == 'q' || key == 'Q') {
-        game.stop();
+    for (char key : game.pressedKeys()) {
+        if (key == 'm') {
+            game.changeState(std::make_shared<MenuState>(game));
+            return;
+        }
+        if (key == 'q') {
+            game.stop();
+            return;
+        }
     }
 }
 
 void GameOverState::update(float dt) {
     (void)dt;
+}
+
+void GameOverState::render() {
+    game.getRenderer()->render(game.getEngine()->getObjects());
+    game.getRenderer()->showGameOver();
 }

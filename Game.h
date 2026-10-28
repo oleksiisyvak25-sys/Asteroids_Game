@@ -7,6 +7,7 @@
 #include "Renderer.h"
 #include <memory>
 #include <string>
+#include <vector>
 
 class Game {
 private:
@@ -30,8 +31,8 @@ public:
     void startNewGame();
     void continueEndless();
 
-    bool readLine(const std::string& prompt, std::string& line);
-    char readKey(const std::string& prompt);
+    std::vector<char> pressedKeys();
+    bool isKeyHeld(char key) const;
 
     std::shared_ptr<GameEngine> getEngine() const;
     std::shared_ptr<Renderer> getRenderer() const;

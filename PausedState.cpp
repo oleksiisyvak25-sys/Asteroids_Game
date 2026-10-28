@@ -3,21 +3,30 @@
 #include "PlayingState.h"
 #include "MenuState.h"
 
-PausedState::PausedState(Game& gameInstance) : game(gameInstance) {
-    game.getRenderer()->showPaused();
-}
+PausedState::PausedState(Game& gameInstance) : game(gameInstance) {}
 
 void PausedState::handleInput() {
-    const char key = game.readKey("paused> ");
-    if (key == 'r' || key == 'R') {
-        game.changeState(std::make_shared<PlayingState>(game));
-    } else if (key == 'm' || key == 'M') {
-        game.changeState(std::make_shared<MenuState>(game));
-    } else if (key == 'q' || key == 'Q') {
-        game.stop();
+    for (char key : game.pressedKeys()) {
+        if (key == 'r' || key == 'p') {
+            game.changeState(std::make_shared<PlayingState>(game));
+            return;
+        }
+        if (key == 'm') {
+            game.changeState(std::make_shared<MenuState>(game));
+            return;
+        }
+        if (key == 'q') {
+            game.stop();
+            return;
+        }
     }
 }
 
 void PausedState::update(float dt) {
-    (void)dt; // під час паузи світ не рухається
+    (void)dt;
+}
+
+void PausedState::render() {
+    game.getRenderer()->render(game.getEngine()->getObjects());
+    game.getRenderer()->showPaused();
 }

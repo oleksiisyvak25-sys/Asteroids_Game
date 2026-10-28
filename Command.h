@@ -20,8 +20,11 @@ public:
 };
 
 class ThrustCommand : public Command {
+private:
+    float scale;
+
 public:
-    ThrustCommand() = default;
+    explicit ThrustCommand(float s = 1.0f);
     void execute(Spaceship& ship) override;
 };
 

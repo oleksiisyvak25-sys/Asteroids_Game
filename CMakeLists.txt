@@ -37,3 +37,11 @@ set(GAME_CORE_SRC
 )
 
 add_executable(Asteroids_Game main.cpp ${GAME_CORE_SRC})
+
+find_package(SFML 3 COMPONENTS Graphics Window System QUIET)
+if(SFML_FOUND)
+    target_link_libraries(Asteroids_Game PRIVATE SFML::Graphics SFML::Window SFML::System)
+else()
+    find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+    target_link_libraries(Asteroids_Game PRIVATE sfml-graphics sfml-window sfml-system)
+endif()

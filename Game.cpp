@@ -2,6 +2,8 @@
 #include "MenuState.h"
 #include "PlayingState.h"
 #include "Config.h"
+#include <algorithm>
+#include <chrono>
 #include <iostream>
 
 Game::Game(const std::string& highScoreFile) : isRunning(true) {
@@ -42,39 +44,41 @@ void Game::continueEndless() {
     changeState(std::make_shared<PlayingState>(*this));
 }
 
-bool Game::readLine(const std::string& prompt, std::string& line) {
-    renderer->showPrompt(prompt);
-    if (!std::getline(std::cin, line)) {
-        stop();
-        return false;
-    }
-    return true;
+std::vector<char> Game::pressedKeys() {
+    return renderer->takePressedKeys();
 }
 
-char Game::readKey(const std::string& prompt) {
-    std::string line;
-    if (!readLine(prompt, line)) {
-        return '\0';
-    }
-    for (char c : line) {
-        if (c != ' ' && c != '\t' && c != '\r') {
-            return c;
-        }
-    }
-    return '\0';
+bool Game::isKeyHeld(char key) const {
+    return renderer->isKeyHeld(key);
 }
 
 void Game::run() {
-    while (isRunning && state) {
+    using Clock = std::chrono::steady_clock;
+    auto last = Clock::now();
+
+    while (isRunning && renderer->isOpen() && state) {
+        const auto now = Clock::now();
+        const float dt = std::min(std::chrono::duration<float>(now - last).count(),
+                                  Config::MAX_FRAME_TIME);
+        last = now;
+
+        renderer->pollEvents();
+        if (!renderer->isOpen()) {
+            break;
+        }
+
         state->handleInput();
         if (!isRunning) {
             break;
         }
-        if (applyPendingState()) {
-            continue;
-        }
-        state->update(Config::TURN_TIME);
         applyPendingState();
+
+        state->update(dt);
+        applyPendingState();
+
+        renderer->beginFrame();
+        state->render();
+        renderer->endFrame();
     }
     std::cout << "\n[Game] Main loop terminated. Bye!\n";
 }

@@ -58,8 +58,8 @@ void Spaceship::rotate(float dir) {
     if (angle <= -180.0f) angle += 360.0f;
 }
 
-void Spaceship::thrust() {
-    velocity += Vector2::fromAngle(angle) * Config::SHIP_THRUST_IMPULSE;
+void Spaceship::thrust(float scale) {
+    velocity += Vector2::fromAngle(angle) * (Config::SHIP_THRUST_IMPULSE * scale);
     clampSpeed();
 }
 
