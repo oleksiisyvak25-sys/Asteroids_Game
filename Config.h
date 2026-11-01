@@ -12,7 +12,7 @@ namespace Config {
 
     constexpr int   SHIP_START_HEALTH      = 3;
     constexpr float SHIP_RADIUS            = 16.0f;
-    constexpr float SHIP_ROTATION_STEP     = 15.0f;
+    constexpr float SHIP_ROTATION_STEP     = 45.0f;
     constexpr float SHIP_THRUST_IMPULSE    = 30.0f;
     constexpr float SHIP_MAX_SPEED         = 220.0f;
     constexpr float SHIP_SHOOT_COOLDOWN    = 0.2f;
