@@ -24,5 +24,5 @@ std::shared_ptr<Asteroid> AsteroidFactory::create(AsteroidType type, int size, V
             break;
     }
 
-    return std::make_shared<Asteroid>(type, size, pos, vel, behavior);
+    return std::make_shared<Asteroid>(size, pos, vel, behavior);
 }

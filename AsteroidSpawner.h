@@ -16,8 +16,7 @@ private:
 
 public:
     explicit AsteroidSpawner(unsigned seed = std::random_device{}());
-
-    std::vector<std::shared_ptr<Asteroid>> spawnWave(int waveNumber);
+    std::vector<std::shared_ptr<Asteroid>> spawnWave(int waveNumber, const Vector2& shipPos);
 
     static int asteroidCountForWave(int waveNumber);
     static int specialChancePercent(int waveNumber);

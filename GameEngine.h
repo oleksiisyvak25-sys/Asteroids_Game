@@ -50,12 +50,13 @@ public:
     void enableEndlessMode();
 
     const std::vector<std::shared_ptr<GameObject>>& getObjects() const;
-    std::shared_ptr<Spaceship> getShip() const;
-    ProjectilePool& getProjectilePool();
+    std::shared_ptr<const Spaceship> getShip() const;
     int getWave() const;
     bool isEndless() const;
     bool isGameOver() const;
     bool isVictory() const;
+    GameEngine(const GameEngine&) = delete;
+    GameEngine& operator=(const GameEngine&) = delete;
 };
 
 #endif //ASTEROIDS_GAME_GAMEENGINE_H

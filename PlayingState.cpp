@@ -6,39 +6,35 @@
 #include "VictoryState.h"
 
 PlayingState::PlayingState(Game& gameInstance) : game(gameInstance) {
-    inputHandler = std::make_unique<InputHandler>(*game.getEngine());
+    inputHandler = std::make_unique<InputHandler>(game);
 }
 
 void PlayingState::handleInput() {
     for (char key : game.pressedKeys()) {
-        if (key == 'p') {
-            game.changeState(std::make_shared<PausedState>(game));
-            return;
-        }
-        if (key == 'q') {
-            game.stop();
-            return;
+        std::unique_ptr<Command> command = inputHandler->handle(key, 0.0f);
+        if (command) {
+            command->execute(*game.getEngine());
         }
     }
 }
 
 void PlayingState::applyHeldControls(float dt) {
-    auto engine = game.getEngine();
+    std::shared_ptr<GameEngine> engine = game.getEngine();
     const float scale = dt / Config::TURN_TIME;
 
     for (char key : {'a', 'd', 'w', ' '}) {
         if (!game.isKeyHeld(key)) {
             continue;
         }
-        std::shared_ptr<Command> command = inputHandler->handle(key, scale);
+        std::unique_ptr<Command> command = inputHandler->handle(key, scale);
         if (command) {
-            command->execute(*engine->getShip());
+            command->execute(*engine);
         }
     }
 }
 
 void PlayingState::update(float dt) {
-    auto engine = game.getEngine();
+    std::shared_ptr<GameEngine> engine = game.getEngine();
     applyHeldControls(dt);
     engine->update(dt);
 

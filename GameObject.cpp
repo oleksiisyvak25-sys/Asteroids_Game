@@ -12,11 +12,11 @@ namespace {
     }
 }
 
-GameObject::GameObject()
-    : position(0.0f, 0.0f),
-      velocity(0.0f, 0.0f),
+GameObject::GameObject(Vector2 pos, Vector2 vel, float r)
+    : position(pos),
+      velocity(vel),
       angle(0.0f),
-      radius(10.0f),
+      radius(r),
       active(true) {}
 
 void GameObject::update(float dt) {
@@ -34,7 +34,6 @@ const Vector2& GameObject::getVelocity() const { return velocity; }
 float GameObject::getAngle() const { return angle; }
 float GameObject::getRadius() const { return radius; }
 bool GameObject::isActive() const { return active; }
+void GameObject::activate() { active = true; }
 
-void GameObject::setPosition(const Vector2& p) { position = p; }
-void GameObject::setVelocity(const Vector2& v) { velocity = v; }
 void GameObject::deactivate() { active = false; }

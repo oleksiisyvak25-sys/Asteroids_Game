@@ -4,16 +4,14 @@
 #include "Command.h"
 #include <memory>
 
-class GameEngine;
+class Game;
 
 class InputHandler {
 private:
-    GameEngine& engine;
-
+    Game& game;
 public:
-    explicit InputHandler(GameEngine& gameEngine);
-
-    std::shared_ptr<Command> handle(char key, float scale = 1.0f) const;
+    explicit InputHandler(Game& g);
+    std::unique_ptr<Command> handle(char key, float scale = 0.0f) const;
 };
 
 #endif //ASTEROIDS_GAME_INPUTHANDLER_H

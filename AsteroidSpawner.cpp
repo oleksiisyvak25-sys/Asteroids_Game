@@ -35,7 +35,7 @@ AsteroidType AsteroidSpawner::rollType(int waveNumber) {
     return AsteroidType::Normal;
 }
 
-std::vector<std::shared_ptr<Asteroid>> AsteroidSpawner::spawnWave(int waveNumber) {
+std::vector<std::shared_ptr<Asteroid>> AsteroidSpawner::spawnWave(int waveNumber, const Vector2& shipPos) {
     std::vector<std::shared_ptr<Asteroid>> waveAsteroids;
 
     const int count = asteroidCountForWave(waveNumber);
@@ -46,24 +46,26 @@ std::vector<std::shared_ptr<Asteroid>> AsteroidSpawner::spawnWave(int waveNumber
         Vector2 pos;
         Vector2 inward;
 
-        switch (randomInt(0, 3)) {
-            case 0:
-                pos = Vector2(randomFloat(0.0f, Config::WORLD_WIDTH), 0.0f);
-                inward = Vector2(0.0f, 1.0f);
-                break;
-            case 1:
-                pos = Vector2(randomFloat(0.0f, Config::WORLD_WIDTH), Config::WORLD_HEIGHT);
-                inward = Vector2(0.0f, -1.0f);
-                break;
-            case 2:
-                pos = Vector2(0.0f, randomFloat(0.0f, Config::WORLD_HEIGHT));
-                inward = Vector2(1.0f, 0.0f);
-                break;
-            default:
-                pos = Vector2(Config::WORLD_WIDTH, randomFloat(0.0f, Config::WORLD_HEIGHT));
-                inward = Vector2(-1.0f, 0.0f);
-                break;
-        }
+        do {
+            switch (randomInt(0, 3)) {
+                case 0:
+                    pos = Vector2(randomFloat(0.0f, Config::WORLD_WIDTH), 0.0f);
+                    inward = Vector2(0.0f, 1.0f);
+                    break;
+                case 1:
+                    pos = Vector2(randomFloat(0.0f, Config::WORLD_WIDTH), Config::WORLD_HEIGHT);
+                    inward = Vector2(0.0f, -1.0f);
+                    break;
+                case 2:
+                    pos = Vector2(0.0f, randomFloat(0.0f, Config::WORLD_HEIGHT));
+                    inward = Vector2(1.0f, 0.0f);
+                    break;
+                default:
+                    pos = Vector2(Config::WORLD_WIDTH, randomFloat(0.0f, Config::WORLD_HEIGHT));
+                    inward = Vector2(-1.0f, 0.0f);
+                    break;
+            }
+        } while (pos.distanceTo(shipPos) < 150.0f);
 
         const Vector2 vel = inward.rotated(randomFloat(-60.0f, 60.0f)) * randomFloat(minSpeed, maxSpeed);
         waveAsteroids.push_back(AsteroidFactory::create(rollType(waveNumber), Config::ASTEROID_MAX_SIZE, pos, vel));

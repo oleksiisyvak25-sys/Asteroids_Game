@@ -3,8 +3,13 @@
 #include "Spaceship.h"
 #include "Config.h"
 
-void GravityBehavior::onDestroyed(Asteroid& a) {
+float GravityBehavior::onDestroyed(const Asteroid& a) const {
     (void)a;
+    return 0.0f;
+}
+
+AsteroidType GravityBehavior::type() const {
+    return AsteroidType::Gravity;
 }
 
 void GravityBehavior::applyEffect(Asteroid& a, Spaceship& s, float dt) {

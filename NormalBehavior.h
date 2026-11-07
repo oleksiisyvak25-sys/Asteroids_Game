@@ -8,7 +8,8 @@ public:
     NormalBehavior() = default;
     ~NormalBehavior() override = default;
 
-    void onDestroyed(Asteroid& a) override;
+    float onDestroyed(const Asteroid& a) const override;
+    AsteroidType type() const override;
     void applyEffect(Asteroid& a, Spaceship& s, float dt) override;
 };
 

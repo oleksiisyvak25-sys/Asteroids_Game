@@ -22,7 +22,7 @@ public:
     ObjectType getType() const override;
     void update(float dt) override;
     void onCollision(GameObject& other) override;
-
+    void onBlast(int dmg) override;
     void rotate(float dir);
     void thrust(float scale = 1.0f);
     std::shared_ptr<Projectile> shoot();
@@ -34,6 +34,9 @@ public:
     int getHealth() const;
     bool isShielded() const;
     float getShieldTime() const;
+
+    Spaceship(const Spaceship&) = delete;
+    Spaceship& operator=(const Spaceship&) = delete;
 };
 
 #endif //ASTEROIDS_GAME_SPACESHIP_H

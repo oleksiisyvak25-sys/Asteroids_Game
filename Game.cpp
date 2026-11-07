@@ -54,10 +54,11 @@ bool Game::isKeyHeld(char key) const {
 
 void Game::run() {
     using Clock = std::chrono::steady_clock;
-    auto last = Clock::now();
+
+    Clock::time_point last = Clock::now();
 
     while (isRunning && renderer->isOpen() && state) {
-        const auto now = Clock::now();
+        const Clock::time_point now = Clock::now();
         const float dt = std::min(std::chrono::duration<float>(now - last).count(),
                                   Config::MAX_FRAME_TIME);
         last = now;

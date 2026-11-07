@@ -104,10 +104,19 @@ namespace {
 
         sf::Color outline = scaled(base, 1.35f);
         float thickness = 2.0f;
+
         if (asteroid.getKind() == AsteroidType::Explosive) {
             const float pulse = 0.5f + 0.5f * std::sin(time * 7.0f);
             outline = sf::Color(255, static_cast<std::uint8_t>(120 + 110 * pulse), 70);
             thickness = 2.0f + 2.0f * pulse;
+
+            const float estimatedBlastRadius = Config::BLAST_BASE_RADIUS +
+                                               Config::BLAST_RADIUS_PER_SIZE * static_cast<float>(asteroid.getSize());
+
+            drawCircle(target, p, estimatedBlastRadius,
+                       withAlpha(sf::Color(255, 50, 50), 10.0f + 15.0f * pulse),
+                       withAlpha(sf::Color(255, 50, 50), 30.0f + 30.0f * pulse),
+                       1.0f);
         }
 
         drawCircle(target, p, r, scaled(base, 0.55f), outline, thickness);

@@ -4,14 +4,16 @@
 #include <cmath>
 
 Spaceship::Spaceship(ProjectilePool& projectilePool)
-    : health(Config::SHIP_START_HEALTH),
+    : GameObject(Vector2(Config::WORLD_WIDTH / 2.0f, Config::WORLD_HEIGHT / 2.0f),
+                 Vector2(0.0f, 0.0f),
+                 Config::SHIP_RADIUS),
+      health(Config::SHIP_START_HEALTH),
       shield(false),
       shieldTimer(0.0f),
       shootTimer(0.0f),
       pool(projectilePool) {
-    position = Vector2(Config::WORLD_WIDTH / 2.0f, Config::WORLD_HEIGHT / 2.0f);
-    angle = -90.0f;
-    radius = Config::SHIP_RADIUS;
+
+    setInternalAngle(-90.0f);
 }
 
 ObjectType Spaceship::getType() const {
@@ -19,7 +21,7 @@ ObjectType Spaceship::getType() const {
 }
 
 void Spaceship::clampSpeed() {
-    velocity = velocity.clampedLength(Config::SHIP_MAX_SPEED);
+    setInternalVelocity(getVelocity().clampedLength(Config::SHIP_MAX_SPEED));
 }
 
 void Spaceship::update(float dt) {
@@ -51,15 +53,21 @@ void Spaceship::onCollision(GameObject& other) {
     }
 }
 
+void Spaceship::onBlast(int dmg) {
+    takeDamage(dmg);
+}
+
 void Spaceship::rotate(float dir) {
-    angle += dir * Config::SHIP_ROTATION_STEP;
-    angle = std::fmod(angle, 360.0f);
-    if (angle > 180.0f) angle -= 360.0f;
-    if (angle <= -180.0f) angle += 360.0f;
+    float newAngle = getAngle() + dir * Config::SHIP_ROTATION_STEP;
+    newAngle = std::fmod(newAngle, 360.0f);
+    if (newAngle > 180.0f) newAngle -= 360.0f;
+    if (newAngle <= -180.0f) newAngle += 360.0f;
+    setInternalAngle(newAngle);
 }
 
 void Spaceship::thrust(float scale) {
-    velocity += Vector2::fromAngle(angle) * (Config::SHIP_THRUST_IMPULSE * scale);
+    Vector2 newVel = getVelocity() + Vector2::fromAngle(getAngle()) * (Config::SHIP_THRUST_IMPULSE * scale);
+    setInternalVelocity(newVel);
     clampSpeed();
 }
 
@@ -68,11 +76,11 @@ std::shared_ptr<Projectile> Spaceship::shoot() {
         return nullptr;
     }
 
-    const Vector2 dir = Vector2::fromAngle(angle);
-    const Vector2 nose = position + dir * (radius + Config::PROJECTILE_RADIUS + 1.0f);
-    const Vector2 projectileVelocity = velocity + dir * Config::PROJECTILE_SPEED;
+    const Vector2 dir = Vector2::fromAngle(getAngle());
+    const Vector2 nose = getPosition() + dir * (getRadius() + Config::PROJECTILE_RADIUS + 1.0f);
+    const Vector2 projectileVelocity = getVelocity() + dir * Config::PROJECTILE_SPEED;
 
-    auto projectile = pool.acquire();
+    std::shared_ptr<Projectile> projectile = pool.acquire();
     projectile->init(nose, projectileVelocity);
     shootTimer = Config::SHIP_SHOOT_COOLDOWN;
     return projectile;
@@ -94,7 +102,7 @@ void Spaceship::activateShield(float seconds) {
 }
 
 void Spaceship::addVelocity(const Vector2& dv) {
-    velocity += dv;
+    setInternalVelocity(getVelocity() + dv);
 }
 
 int Spaceship::getHealth() const { return health; }

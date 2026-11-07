@@ -55,7 +55,8 @@ void GameEngine::subscribe(const std::shared_ptr<GameObserver>& o) {
 }
 
 void GameEngine::notify(const GameEvent& e) {
-    for (auto& obs : observers) {
+    std::vector<std::shared_ptr<GameObserver>> list = observers;
+    for (const std::shared_ptr<GameObserver>& obs : list) {
         if (obs) {
             obs->onEvent(e);
         }
@@ -64,7 +65,7 @@ void GameEngine::notify(const GameEvent& e) {
 
 void GameEngine::spawnWave(int waveNumber) {
     wave = waveNumber;
-    for (auto& asteroid : asteroidSpawner.spawnWave(wave)) {
+    for (const std::shared_ptr<Asteroid>& asteroid : asteroidSpawner.spawnWave(wave, ship->getPosition())) {
         addObject(asteroid);
     }
     notify(GameEvent(EventType::WaveStarted, wave));
@@ -90,13 +91,13 @@ void GameEngine::update(float dt) {
 void GameEngine::step(float dt) {
     const int healthBefore = ship->getHealth();
 
-    for (auto& obj : objects) {
+    for (const std::shared_ptr<GameObject>& obj : objects) {
         if (obj->isActive()) {
             obj->update(dt);
         }
     }
 
-    for (auto& obj : objects) {
+    for (const std::shared_ptr<GameObject>& obj : objects) {
         if (obj->isActive() && obj->getType() == ObjectType::Asteroid) {
             std::static_pointer_cast<Asteroid>(obj)->applyEffect(*ship, dt);
         }
@@ -113,7 +114,7 @@ void GameEngine::step(float dt) {
 }
 
 void GameEngine::collectDestroyedAsteroids(std::vector<std::shared_ptr<Asteroid>>& out) {
-    for (auto it = objects.begin(); it != objects.end();) {
+    for (std::vector<std::shared_ptr<GameObject>>::iterator it = objects.begin(); it != objects.end();) {
         if ((*it)->getType() == ObjectType::Asteroid && !(*it)->isActive()) {
             out.push_back(std::static_pointer_cast<Asteroid>(*it));
             it = objects.erase(it);
@@ -141,7 +142,7 @@ void GameEngine::processDestroyedAsteroids() {
             collectDestroyedAsteroids(queue);
         }
 
-        for (auto& fragment : ast->split()) {
+        for (const std::shared_ptr<Asteroid>& fragment : ast->split()) {
             spawned.push_back(fragment);
         }
 
@@ -152,7 +153,7 @@ void GameEngine::processDestroyedAsteroids() {
         }
     }
 
-    for (auto& o : spawned) {
+    for (const std::shared_ptr<GameObject>& o : spawned) {
         addObject(o);
     }
 }
@@ -161,7 +162,7 @@ void GameEngine::explode(const Asteroid& source) {
     const float blast = source.getBlastRadius();
     notify(GameEvent(EventType::Explosion, static_cast<int>(blast), source.getPosition()));
 
-    for (auto& obj : objects) {
+    for (const std::shared_ptr<GameObject>& obj : objects) {
         if (!obj->isActive()) {
             continue;
         }
@@ -170,23 +171,19 @@ void GameEngine::explode(const Asteroid& source) {
             continue;
         }
 
-        if (obj->getType() == ObjectType::Ship) {
-            ship->takeDamage(Config::BLAST_DAMAGE);
-        } else if (obj->getType() == ObjectType::Asteroid) {
-            std::static_pointer_cast<Asteroid>(obj)->destroy();
-        }
+        obj->onBlast(Config::BLAST_DAMAGE);
     }
 }
 
 void GameEngine::removeInactiveObjects() {
-    for (auto& obj : objects) {
+    for (const std::shared_ptr<GameObject>& obj : objects) {
         if (obj->isActive()) {
             continue;
         }
         if (obj->getType() == ObjectType::Projectile) {
             projectilePool.release(std::static_pointer_cast<Projectile>(obj));
         } else if (obj->getType() == ObjectType::Bonus) {
-            auto bonus = std::static_pointer_cast<ShieldBonus>(obj);
+            std::shared_ptr<ShieldBonus> bonus = std::static_pointer_cast<ShieldBonus>(obj);
             if (bonus->isCollected()) {
                 notify(GameEvent(EventType::ShieldCollected,
                                  static_cast<int>(Config::SHIELD_BONUS_DURATION), bonus->getPosition()));
@@ -234,8 +231,7 @@ int GameEngine::countAsteroids() const {
 
 
 const std::vector<std::shared_ptr<GameObject>>& GameEngine::getObjects() const { return objects; }
-std::shared_ptr<Spaceship> GameEngine::getShip() const { return ship; }
-ProjectilePool& GameEngine::getProjectilePool() { return projectilePool; }
+std::shared_ptr<const Spaceship> GameEngine::getShip() const { return ship; }
 int GameEngine::getWave() const { return wave; }
 bool GameEngine::isEndless() const { return endless; }
 bool GameEngine::isGameOver() const { return gameOver; }

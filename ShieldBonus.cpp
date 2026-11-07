@@ -2,10 +2,9 @@
 #include "Config.h"
 
 ShieldBonus::ShieldBonus(Vector2 pos, Vector2 vel)
-    : lifetime(Config::BONUS_LIFETIME), collected(false) {
-    position = pos;
-    velocity = vel;
-    radius = Config::BONUS_RADIUS;
+    : GameObject(pos, vel, Config::BONUS_RADIUS),
+      lifetime(Config::BONUS_LIFETIME),
+      collected(false) {
 }
 
 ObjectType ShieldBonus::getType() const {
@@ -16,14 +15,14 @@ void ShieldBonus::update(float dt) {
     GameObject::update(dt);
     lifetime -= dt;
     if (lifetime <= 0.0f) {
-        active = false;
+        deactivate();
     }
 }
 
 void ShieldBonus::onCollision(GameObject& other) {
     if (other.getType() == ObjectType::Ship) {
         collected = true;
-        active = false;
+        deactivate();
     }
 }
 

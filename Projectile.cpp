@@ -3,9 +3,9 @@
 #include <cmath>
 
 Projectile::Projectile()
-    : lifetime(0.0f), maxLifetime(Config::PROJECTILE_LIFETIME) {
-    radius = Config::PROJECTILE_RADIUS;
-    active = false;
+    : GameObject(Vector2(0.0f, 0.0f), Vector2(0.0f, 0.0f), Config::PROJECTILE_RADIUS),
+      lifetime(0.0f), maxLifetime(Config::PROJECTILE_LIFETIME) {
+    deactivate();
 }
 
 ObjectType Projectile::getType() const {
@@ -14,27 +14,27 @@ ObjectType Projectile::getType() const {
 
 void Projectile::reset() {
     lifetime = 0.0f;
-    active = true;
+    activate();
 }
 
 void Projectile::init(Vector2 pos, Vector2 vel) {
     reset();
-    position = pos;
-    velocity = vel;
-    angle = std::atan2(vel.y, vel.x) * 180.0f / Config::PI;
+    setInternalPosition(pos);
+    setInternalVelocity(vel);
+    setInternalAngle(std::atan2(vel.y, vel.x) * 180.0f / Config::PI);
 }
 
 void Projectile::update(float dt) {
     GameObject::update(dt);
     lifetime += dt;
     if (lifetime >= maxLifetime) {
-        active = false;
+        deactivate();
     }
 }
 
 void Projectile::onCollision(GameObject& other) {
     if (other.getType() == ObjectType::Asteroid) {
-        active = false;
+        deactivate();
     }
 }
 
